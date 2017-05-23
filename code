@@ -1,0 +1,61 @@
+library(dplyr)
+library(stringr)
+
+library(tidyr)
+library(readxl)
+
+data_saa = read_excel("D:\\Documents\\WeChat Files\\wxid_j7hdvspepr3711\\Files\\data5.23.xlsx")
+
+##去除分割符
+data_saa$临床诊断 = str_trim(data_saa$临床诊断)
+
+
+
+##是否局部
+data_saa$局部 = str_detect(data_saa$临床诊断,
+                               pattern = "局部")
+
+
+##是否待查
+data_saa$待查1 = str_detect(data_saa$临床诊断,
+                           pattern = "待查")
+
+data_saa$待查2 = str_detect(data_saa$临床诊断,
+                         pattern = "\\?")
+
+
+data_saa$待查 = ifelse((data_saa$待查2 + data_saa$待查1 ) < 1,"确诊","待查")
+
+
+table(data_saa$待查)
+
+
+##年龄情况
+##提取年龄
+num_loc = str_locate(data_saa$年龄 , "[0-9]+")
+data_saa$age1 = str_sub(string = data_saa$年龄, 
+                     start = num_loc[, "start"], 
+                     end =   num_loc[, "end"])
+
+data_saa$unit = str_sub(string = data_saa$年龄, -1)
+
+##年龄统一
+data_saa$age = ifelse(data_saa$unit == "月",
+                   as.numeric(data_saa$age1)/12 ,
+                   as.numeric(data_saa$age1))
+
+
+data_saa$agecut = cut(data_saa$age, 
+                   breaks = c(0,1,3,6,12,140),
+                   labels = c("0-1岁","≤3岁","≤6岁","≤12岁","12以上"))
+
+
+##匹配细菌性
+data_saa$bacteria = str_detect(data_saa$临床诊断,
+                               pattern = "肺脓肿|急性化脓性扁桃体炎|急性化脓性鼻窦炎|急性化脓性阑尾炎|急性化脓性咽炎|甲状腺脓肿|阑尾脓肿|脓毒血症|皮肤脓肿|肝脓肿|化脓性扁挑体炎|耳后脓肿|蜂窝织炎|肛周脓肿|化脓性关节炎|化扁")
+
+filter(data_saa,bacteria == T)
+
+
+-bacteria = data_saa[data_saa$bacteria,]
+
