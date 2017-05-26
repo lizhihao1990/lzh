@@ -1,0 +1,97 @@
+# R Template v.09.13
+# Compiled by Darren J Wilkinson
+# The University of Edinburgh, Scotland
+# d.j.wilkinson@ed.ac.uk
+
+# Packages to load
+library (ggplot2)
+library (grid)
+library (scales)
+
+# Easy customisation parameters
+
+	# Text/Line/Fill Colours
+	colour.1 = "black"		# Text, outside plot area
+	colour.2 = "white"		# Fill, outside plot area
+	colour.3 = "white"		# Fill, plot area
+	colour.5 = "black"		# Text, inside plot area
+	colour.6 = "black"		# Outlines
+
+	# Line Widths
+	lw.r = 1.1618			# Scaling ratio
+	lw.1 = 1.5				# Plot area
+	lw.2 = lw.1/(lw.r^7)	# Axis ticks
+	lw.3 = lw.1/(lw.r^8)	# Legend box
+
+	# Font Sizes
+	fs.r = 1.1618				# Scaling ratio
+	fs.1 = 12					# Axis Labels
+	fs.2 = fs.1 * (fs.r^2)		# Axis title
+	fs.3 = fs.1 * (fs.r^3)		# Plot title
+	fs.4 = fs.1 / (fs.r^2)		# Legend
+	fs.5 = fs.1 / (fs.r^4)		# Legend title
+
+# Plot Code
+
+	# Define the plot
+	ggplot (
+		data = mtcars, 
+		aes (
+			x = wt,
+			y = mpg
+			)
+		) +
+
+	# Data layers
+	geom_point (
+		aes(
+			colour = hp
+			), 
+		size = 4
+		) +
+
+	# Customise: Scales
+	scale_x_continuous (name = "Mass (Tonnes)") +
+	scale_y_continuous (name = "Miles per Gallon (MPG)") +	
+
+	# Customise: Labels
+	labs (
+		title = "Template v.09.13",
+		colour = "Horse\nPower (HP)"
+		) +
+
+		scale_colour_gradient (high = "red", low = "grey") +
+
+	# Customise: Appearance
+	theme (
+		# Plot Attributes
+		plot.title = element_text (vjust = 3, size = fs.3, colour = colour.5),
+		plot.margin = unit (c(5, 2, 5, 3), "lines"), 								# Plot padding
+		plot.background = element_rect (fill = colour.2, colour = F),
+
+		# Panel Attributes
+		panel.border = element_rect (colour = colour.6, fill = F, size = lw.1), 		
+		panel.grid.major = element_blank (), 										# Removes major grid
+		panel.grid.minor = element_blank (),  										# Removes minor grid
+		panel.background = element_rect (fill = colour.3, colour = colour.2), 		
+
+		#Legend Attributes
+		legend.background = element_rect (colour = colour.6, size = lw.3, fill = colour.3),
+		#legend.justification = c(0, 0),							# (1/2) Uncomment to place lnd inside plot area
+		#legend.position = c(0, 0), 								# (2/2) Uncomment to place lnd inside plot area
+		legend.key = element_blank (), 									# Remove bkgrd for legend elements
+		legend.title = element_text (size = fs.4, colour = colour.1),
+		legend.text = element_text (size = fs.5, colour = colour.1),	
+
+		# Axis Attributes
+		axis.title.x = element_text (vjust = -2, size = fs.2, colour = colour.5), 
+		axis.title.y = element_text (vjust = -0.1, angle = 90, size = fs.2, colour = colour.5), 
+		axis.text.x = element_text (size = fs.1, vjust = -0.25, colour = colour.5), 
+		axis.text.y = element_text (size = fs.1, hjust = 1, colour = colour.5), 
+		axis.ticks = element_line (colour = "black", size = lw.3),
+		axis.ticks.length = unit(-(0.5/(1.168^4)) , "cm"), 
+		axis.ticks.margin = unit(0.5, "cm"),
+
+		# Other Attributes
+		aspect.ratio = 1/1.168
+		)
